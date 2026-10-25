@@ -12,8 +12,7 @@ public class ThreadPost
         int id, 
         int authorId, 
         int threadId, 
-        string content, 
-        DateTime createdAt)
+        string content)
         
     {
         return new ThreadPost
@@ -21,8 +20,8 @@ public class ThreadPost
             Id = id,
             AuthorId = authorId,
             ThreadId = threadId,
-            Content = content,
-            CreatedAt = createdAt
+            Content = content.Trim(),
+            CreatedAt = DateTime.UtcNow
         };
     }
 }

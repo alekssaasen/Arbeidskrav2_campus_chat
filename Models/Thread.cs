@@ -1,6 +1,4 @@
-﻿using System.Security.AccessControl;
-
-namespace Arbeidskrav2_campus_chat.Models;
+﻿namespace Arbeidskrav2_campus_chat.Models;
 
 public class Thread
 {
