@@ -25,4 +25,9 @@ public class ThreadPost
             CreatedAt = DateTime.UtcNow
         };
     }
+    public void Update(string content)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(content.Trim());
+        Content = content.Trim();
+    }
 }
