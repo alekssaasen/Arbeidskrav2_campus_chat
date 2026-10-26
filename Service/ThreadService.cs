@@ -34,4 +34,9 @@ public class ThreadService
         var thread = GetThreadById(id);
         thread.Update(title, topic, description);
     }
+    public void DeleteThread(int id)
+    {
+        var thread = GetThreadById(id);
+        _threads.Remove(thread);
+    }
 }
