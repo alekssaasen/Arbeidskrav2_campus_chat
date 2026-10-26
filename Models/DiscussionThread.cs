@@ -1,6 +1,6 @@
 ﻿namespace Arbeidskrav2_campus_chat.Models;
 
-public class Thread
+public class DiscussionThread
 {
     public int Id { get; private set; }
     public string Title { get; private set; } = string.Empty;
@@ -8,14 +8,14 @@ public class Thread
     public string Description { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
 
-    public Thread() { }
-    public static Thread Create(
+    public DiscussionThread() { }
+    public static DiscussionThread Create(
         int id,
         string title,
         string topic,
         string description)
     {
-        return new Thread
+        return new DiscussionThread
         {
             Id = id,
             Title = title.Trim(),
