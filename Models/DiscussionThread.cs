@@ -24,4 +24,13 @@ public class DiscussionThread
             CreatedAt = DateTime.UtcNow
         };
     }
+    public void Update(string title, string topic, string description)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(topic);
+        ArgumentException.ThrowIfNullOrWhiteSpace(description);
+        Title = title.Trim();
+        Topic = topic.Trim();
+        Description = description.Trim();
+    }
 }
