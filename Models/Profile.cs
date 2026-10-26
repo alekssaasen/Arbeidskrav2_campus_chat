@@ -23,8 +23,8 @@ public class Profile
         {
             Id = id,
             UserName = userName.Trim(),
-            Bio = bio,
-            AvatarColor = avatarColor,
+            Bio = bio?.Trim(),
+            AvatarColor = avatarColor.Trim(),
             SchoolYear = schoolYear,
             IsAudit = false
         };
