@@ -8,6 +8,7 @@ public class Thread
     public string Description { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
 
+    public Thread() { }
     public static Thread Create(
         int id,
         string title,

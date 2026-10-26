@@ -8,6 +8,8 @@ public class Profile
     public string AvatarColor { get; private set; } = string.Empty;
     public DateOnly SchoolYear { get; private set; }
     public bool IsAudit { get; private set; }
+    
+    private Profile() { }
 
     public static Profile Create(
         int id,

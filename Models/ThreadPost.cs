@@ -8,6 +8,7 @@ public class ThreadPost
     public string Content { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
 
+    public ThreadPost() { }
     public static ThreadPost Create(
         int id, 
         int authorId, 
