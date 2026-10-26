@@ -29,6 +29,15 @@ public class Profile
             IsAudit = false
         };
     }
+    public void Update(
+        string bio,
+        string avatarColor)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(bio.Trim());
+        ArgumentException.ThrowIfNullOrWhiteSpace(avatarColor.Trim());
+        Bio = bio.Trim();
+        AvatarColor = avatarColor.Trim();
+    }
 
     private static void Validate(string name, DateOnly schoolYear)
     {
