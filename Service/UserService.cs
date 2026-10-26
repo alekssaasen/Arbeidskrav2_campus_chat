@@ -34,4 +34,9 @@ public class UserService
         var profile = GetProfileById(id);
         profile.Update(bio, avatarColor);
     }
+    public void DeleteProfile(int id)
+    {
+        var profile = GetProfileById(id);
+        _profiles.Remove(profile);
+    }
 }
