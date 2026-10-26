@@ -16,7 +16,7 @@ public class DirectMessage
         int receiverId, 
         string message)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(message);
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
         return new DirectMessage
         {
             Id = id,
