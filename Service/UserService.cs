@@ -29,4 +29,9 @@ public class UserService
         }
         return user;
     }
+    public void UpdateProfile(int id, string bio, string avatarColor)
+    {
+        var profile = GetProfileById(id);
+        profile.Update(bio, avatarColor);
+    }
 }
