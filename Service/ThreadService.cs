@@ -29,4 +29,9 @@ public class ThreadService
         }
         return thread;
     }
+    public void UpdateThread(int id, string title, string topic, string description)
+    {
+        var thread = GetThreadById(id);
+        thread.Update(title, topic, description);
+    }
 }
