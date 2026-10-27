@@ -35,7 +35,7 @@ public class ThreadPostService
         var threadPost = _threadPosts.FirstOrDefault(p => p.Id == id);
         if (threadPost == null)
         {
-            throw new ArgumentException("Post not found.");
+            throw new KeyNotFoundException("Post not found.");
         }
         return threadPost;
     }

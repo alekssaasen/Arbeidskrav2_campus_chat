@@ -7,7 +7,7 @@ public class ThreadService
     private readonly List<DiscussionThread> _threads = new();
     private int _nextId = 1;
 
-    public DiscussionThread PostThread(string title, string topic, string description, DateTime createdAt)
+    public DiscussionThread CreateThread(string title, string topic, string description)
     {
         var thread = DiscussionThread.Create(_nextId, title, topic, description);
         _nextId++;
