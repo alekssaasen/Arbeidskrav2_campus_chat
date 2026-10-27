@@ -15,6 +15,7 @@ public class Profile
         int id,
         string userName,
         string? bio,
+        bool isAudit,
         string avatarColor = "#808080",
         DateOnly schoolYear = default)
     {
@@ -26,15 +27,18 @@ public class Profile
             Bio = bio?.Trim(),
             AvatarColor = avatarColor.Trim(),
             SchoolYear = schoolYear,
-            IsAudit = false
+            IsAudit = isAudit
         };
     }
     public void Update(
+        string userName,
         string bio,
-        string avatarColor)
+        string avatarColor,
+        DateOnly schoolYear)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(bio.Trim());
+        ArgumentException.ThrowIfNullOrWhiteSpace(userName.Trim());
         ArgumentException.ThrowIfNullOrWhiteSpace(avatarColor.Trim());
+        ArgumentException.ThrowIfNullOrWhiteSpace(schoolYear.ToShortDateString());
         Bio = bio.Trim();
         AvatarColor = avatarColor.Trim();
     }
