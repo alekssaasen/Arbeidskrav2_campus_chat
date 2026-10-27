@@ -7,6 +7,7 @@ public class DiscussionThread
     public string Topic { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
     public DateTime CreatedAt { get; private set; }
+    public List<ThreadPost> ThreadPosts { get; set; } = new List<ThreadPost>();
 
     public DiscussionThread() { }
     public static DiscussionThread Create(
