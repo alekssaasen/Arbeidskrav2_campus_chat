@@ -18,6 +18,7 @@ public class ThreadPost
         int? parentPostId)
     
     {
+        ArgumentException.ThrowIfNullOrEmpty(content.Trim());
         return new ThreadPost
         {
             Id = id,
