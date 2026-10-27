@@ -6,26 +6,33 @@ public class ThreadPostService
 {
     private readonly List<ThreadPost> _threadPosts = new();
     private int _nextId = 1;
-    private readonly ThreadService _threadService;
+    private readonly DiscussionThreadService _discussionThreadService;
     private readonly UserService _userService;
-    public ThreadPostService(ThreadService threadService, UserService userService)
+    public ThreadPostService(DiscussionThreadService discussionThreadService, UserService userService)
     {
-        _threadService = threadService;
+        _discussionThreadService = discussionThreadService;
         _userService = userService;
     }
-    public ThreadPost CreatePost(int authorId, int threadId, string content)
+    public ThreadPost CreatePost(int authorId, int threadId, string content, int? parentId)
     {
-        var discussionThread = _threadService.GetThreadById(threadId);
+        var discussionThread = _discussionThreadService.GetThreadById(threadId);
         var profile = _userService.GetProfileById(authorId);
-        var threadPost = ThreadPost.Create(_nextId, profile.Id, discussionThread.Id, content);
-        
+        if (parentId != null)
+        {
+            var parentPost = GetPostById(parentId.Value);
+            if (parentPost.ThreadId != discussionThread.Id)
+            {
+                throw new ArgumentException("Reply must belong to the same thread.");
+            }
+        }
+        var threadPost = ThreadPost.Create(_nextId, profile.Id, discussionThread.Id ,content, parentId);
         _nextId++;
         _threadPosts.Add(threadPost);
         return threadPost;
     }
     public IEnumerable<ThreadPost> GetPostsByThreadId(int id)
     {
-        var discussionThread = _threadService.GetThreadById(id);
+        var discussionThread = _discussionThreadService.GetThreadById(id);
 
         return _threadPosts.Where(t => t.ThreadId == discussionThread.Id);
     }
