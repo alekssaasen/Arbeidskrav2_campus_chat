@@ -6,15 +6,17 @@ public class ThreadPost
     public int AuthorId { get; private set; }
     public int ThreadId { get; private set; }
     public string Content { get; private set; } = string.Empty;
+    public int? ParentPostId { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
     public ThreadPost() { }
     public static ThreadPost Create(
         int id, 
         int authorId, 
-        int threadId, 
-        string content)
-        
+        int threadId,
+        string content,
+        int? parentPostId)
+    
     {
         return new ThreadPost
         {
@@ -22,6 +24,7 @@ public class ThreadPost
             AuthorId = authorId,
             ThreadId = threadId,
             Content = content.Trim(),
+            ParentPostId = parentPostId,
             CreatedAt = DateTime.UtcNow
         };
     }
