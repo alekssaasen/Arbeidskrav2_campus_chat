@@ -2,7 +2,7 @@
 
 namespace Arbeidskrav2_campus_chat.Service;
 
-public class ThreadService
+public class DiscussionThreadService
 {
     private readonly List<DiscussionThread> _threads = new();
     private int _nextId = 1;
