@@ -5,6 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<DiscussionThreadService>();
+builder.Services.AddSingleton<ThreadPostService>();
+builder.Services.AddSingleton<DirectMessageService>();
 
 var app = builder.Build();
 
