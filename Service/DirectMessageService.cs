@@ -32,4 +32,14 @@ public class DirectMessageService
 
         return conversation;
     }
+    public IEnumerable<DirectMessage> GetConversations(int profileId)
+    {
+        var userA = _userServices.GetProfileById(profileId);
+        var messages = _directMessages.Where(dm => dm.SenderId == userA.Id || dm.ReceiverId == userA.Id);
+        var grouped = messages.GroupBy(m => m.SenderId == userA.Id ? m.ReceiverId : m.SenderId);
+
+        var newestDm = grouped.Select(g => g.OrderByDescending(m => m.SentAt).First());
+
+        return newestDm.OrderByDescending(m => m.SentAt);
+    }
 }
