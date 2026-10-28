@@ -1,0 +1,38 @@
+﻿@page "/login"
+@rendermode InteractiveServer
+
+@inject UserService UserService
+@inject ProtectedSessionStorage SessionStorage
+@inject NavigationManager Navigation
+<h3>Sign in</h3>
+<select @bind="_selectedProfileId">
+    <option value="0">Select a profile</option>
+    @foreach (var profile in _profiles)
+    {
+        <option value="@profile.Id">@profile.UserName</option>
+    }
+</select>
+
+<button @onclick="SignIn">Sign in</button>
+
+
+@code {
+    private List<Profile> _profiles = new();
+    private int _selectedProfileId;
+
+    protected override void OnInitialized()
+    {
+        _profiles = UserService.GetAllProfiles();
+    }
+
+    private async Task SignIn()
+    {
+        var user = _profiles.FirstOrDefault(t => t.Id == _selectedProfileId);
+        if (user == null)
+        {
+            return;
+        }
+        await SessionStorage.SetAsync("profileId", user.Id);
+        Navigation.NavigateTo("/threads");
+    }
+}
