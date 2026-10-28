@@ -13,10 +13,15 @@ public class ThreadPostService
         _discussionThreadService = discussionThreadService;
         _userService = userService;
     }
-    public ThreadPost CreatePost(int authorId, int threadId, string content, int? parentId)
+    public ThreadPost CreatePost(int authorId, int threadId, string content, int? parentId, string? accessCode)
     {
         var discussionThread = _discussionThreadService.GetThreadById(threadId);
         var profile = _userService.GetProfileById(authorId);
+        var access = _discussionThreadService.CanAccessThread(discussionThread.Id, authorId, accessCode);
+        if (!access)
+        {
+            throw new UnauthorizedAccessException("You cant post here without access.");
+        }
         if (parentId != null)
         {
             var parentPost = GetPostById(parentId.Value);
@@ -30,11 +35,14 @@ public class ThreadPostService
         _threadPosts.Add(threadPost);
         return threadPost;
     }
-    public IEnumerable<ThreadPost> GetPostsByThreadId(int id)
+    public IEnumerable<ThreadPost> GetPostsByThreadId(int id, int profileId, string? accessCode)
     {
-        var discussionThread = _discussionThreadService.GetThreadById(id);
-
-        return _threadPosts.Where(t => t.ThreadId == discussionThread.Id);
+        var access = _discussionThreadService.CanAccessThread(id, profileId, accessCode);
+        if (!access)
+        {
+            throw new UnauthorizedAccessException("Unauthorized.");
+        }
+        return _threadPosts.Where(t => t.ThreadId == id);
     }
     
     public ThreadPost GetPostById(int id)
@@ -53,7 +61,7 @@ public class ThreadPostService
 
         if (post.AuthorId != user.Id)
         {
-            throw new ArgumentException("This post does not belong to this user.");
+            throw new UnauthorizedAccessException("This post does not belong to you.");
         }
         _threadPosts.Remove(post);
 
