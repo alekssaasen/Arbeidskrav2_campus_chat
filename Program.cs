@@ -11,6 +11,7 @@ builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<DiscussionThreadService>();
 builder.Services.AddSingleton<ThreadPostService>();
 builder.Services.AddSingleton<DirectMessageService>();
+builder.Services.AddScoped<CurrentUserService>();
 builder.Services.AddScoped<ProtectedSessionStorage>();
 var app = builder.Build();
 
