@@ -21,18 +21,41 @@ public class DirectMessageService
         _directMessages.Add(dM);
         return dM;
     }
-    
-    public IEnumerable<DirectMessage> GetMessages(int senderId, int receiverId)
+    private bool CanReadConversation(int callerId, int userAId, int userBId)
     {
-        var userA = _userServices.GetProfileById(senderId);
-        var userB = _userServices.GetProfileById(receiverId);
+        if (callerId == userAId)
+        {
+            return true;
+        }
+        if (callerId == userBId)
+        {
+            return true;
+        }
+        var caller = _userServices.GetProfileById(callerId);
+        if (caller.IsAudit)
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    public List<DirectMessage> GetMessages(int callerId, int userAId, int userBId)
+    {
+        var userA = _userServices.GetProfileById(userAId);
+        var userB = _userServices.GetProfileById(userBId);
+
+        if (!CanReadConversation(callerId, userAId, userBId))
+        {
+            throw new UnauthorizedAccessException("You cannot read this conversation.");
+        }
+        
         var conversation = _directMessages.
-            Where(u => u.SenderId == userA.Id && u.ReceiverId == userB.Id || u.SenderId == userB.Id && u.ReceiverId == userA.Id)
+            Where(m => m.SenderId == userA.Id && m.ReceiverId == userB.Id || m.SenderId == userB.Id && m.ReceiverId == userA.Id)
             .OrderBy(d => d.SentAt);
 
-        return conversation;
+        return conversation.ToList();
     }
-    public IEnumerable<DirectMessage> GetConversations(int profileId)
+    public List<DirectMessage> GetConversations(int profileId)
     {
         var userA = _userServices.GetProfileById(profileId);
         var messages = _directMessages.Where(dm => dm.SenderId == userA.Id || dm.ReceiverId == userA.Id);
@@ -40,6 +63,6 @@ public class DirectMessageService
 
         var newestDm = grouped.Select(g => g.OrderByDescending(m => m.SentAt).First());
 
-        return newestDm.OrderByDescending(m => m.SentAt);
+        return newestDm.OrderByDescending(m => m.SentAt).ToList();
     }
 }
