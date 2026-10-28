@@ -1,4 +1,5 @@
 using Arbeidskrav2_campus_chat.Components;
+using Arbeidskrav2_campus_chat.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
