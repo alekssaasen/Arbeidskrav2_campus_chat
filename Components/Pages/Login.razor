@@ -33,6 +33,7 @@
             return;
         }
         await SessionStorage.SetAsync("profileId", user.Id);
+        CurrentUserService.SetProfile(user.Id);
         Navigation.NavigateTo("/threads");
     }
 }
