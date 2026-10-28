@@ -60,19 +60,16 @@ else
         if (firstRender)
         {
             await CurrentUserService.RestoreProfileAsync();
-            if (CurrentUserService.ProfileId != null)
+            
+            try
             {
-                int profileId = CurrentUserService.ProfileId.Value;
-                try
-                {
-                    _posts = PostService
-                        .GetPostsByThreadId(ThreadId, profileId, null)
-                        .ToList();
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    _needsCode = true;
-                }
+                _posts = PostService
+                    .GetPostsByThreadId(ThreadId, CurrentUserService.ProfileId, null)
+                    .ToList();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                _needsCode = true; 
             }
             StateHasChanged();
         }
