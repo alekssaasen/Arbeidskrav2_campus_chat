@@ -1,6 +1,32 @@
-﻿@page "/ThreadDetails"
+﻿@page "/threads/{ThreadId:int}"
+@inject DiscussionThreadService ThreadService
+@rendermode InteractiveServer
 <h3>ThreadDetails</h3>
+@if (_thread != null)
+{
+    <p>@_thread.Title</p>
+    <p>@_thread.Topic</p>
+    <p>@_thread.Description</p>
+}
+else
+{
+    <p>Thread not found.</p>
+}
 
 @code {
-    
+    [Parameter]
+    public int ThreadId { get; set; }
+    private DiscussionThread? _thread;
+
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            _thread = ThreadService.GetThreadById(ThreadId);
+        }
+        catch (KeyNotFoundException)
+        {
+            _thread = null;
+        }
+    }
 }
