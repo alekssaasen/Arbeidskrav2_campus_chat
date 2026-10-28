@@ -8,4 +8,13 @@ public class CurrentUserService
     {
         ProfileId = profileId;
     }
+
+    public async Task RestoreProfileAsync(ProtectedSessionStorage sessionStorage)
+    {
+        var storedId = await sessionStorage.GetAsync<int>("profileId");
+        if (storedId.Success)
+        {
+            ProfileId = storedId.Value;
+        }
+    }
 }
