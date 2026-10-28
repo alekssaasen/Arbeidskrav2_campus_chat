@@ -14,7 +14,9 @@
     @foreach (var thread in _threads)
     {
         <tr>
-            <td class="fw-semibold">@thread.Title</td>
+            <td class="fw-semibold">
+                <a href="/threads/@thread.Id">@thread.Title</a>
+            </td>
             <td>@thread.Topic</td>
             <td class="text-end">
                 <span class="badge @(thread.IsPrivate ? "bg-secondary" : "bg-success")">
