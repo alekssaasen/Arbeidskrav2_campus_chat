@@ -19,7 +19,7 @@ public class Profile
         string avatarColor = "#808080",
         DateOnly schoolYear = default)
     {
-        Validate(userName, schoolYear);
+        Validate(userName, avatarColor, schoolYear);
         return new Profile
         {
             Id = id,
@@ -36,14 +36,14 @@ public class Profile
         string avatarColor,
         DateOnly schoolYear)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(userName.Trim());
-        ArgumentException.ThrowIfNullOrWhiteSpace(avatarColor.Trim());
-        ArgumentException.ThrowIfNullOrWhiteSpace(schoolYear.ToShortDateString());
+        Validate(userName, avatarColor, schoolYear);
+        UserName = userName.Trim();
         Bio = bio.Trim();
         AvatarColor = avatarColor.Trim();
+        SchoolYear = schoolYear;
     }
 
-    private static void Validate(string name, DateOnly schoolYear)
+    private static void Validate(string name, string avatarColor, DateOnly schoolYear)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -52,6 +52,10 @@ public class Profile
         if (schoolYear == default)
         {
             throw new ArgumentException("School year is required");
+        }
+        if (string.IsNullOrWhiteSpace(avatarColor))
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(avatarColor.Trim());
         }
     }
 }
