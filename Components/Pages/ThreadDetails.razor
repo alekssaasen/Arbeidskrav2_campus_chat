@@ -16,12 +16,33 @@ else
 {
     <p>Thread not found.</p>
 }
+@if (_needsCode)
+{
+    <p>This thread is private. Enter the code to read it.</p>
+}
+else if (_posts == null)
+{
+    <p>Loading…</p>
+}
+else if (!_posts.Any())
+{
+    <p>No posts yet. Be the first!</p>
+}
+else
+{
+    @foreach (var post in _posts)
+    {
+        <p>@post.Content</p>
+    }
+}
 
 @code {
     [Parameter]
     public int ThreadId { get; set; }
     private DiscussionThread? _thread;
     private IEnumerable<ThreadPost>? _posts;
+    private bool _needsCode;
+
 
     protected override void OnParametersSet()
     {
@@ -38,7 +59,21 @@ else
     {
         if (firstRender)
         {
-            await CurrentUserService.RestoreProfileAsync(SessionStorage);
+            await CurrentUserService.RestoreProfileAsync();
+            if (CurrentUserService.ProfileId != null)
+            {
+                int profileId = CurrentUserService.ProfileId.Value;
+                try
+                {
+                    _posts = PostService
+                        .GetPostsByThreadId(ThreadId, profileId, null)
+                        .ToList();
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    _needsCode = true;
+                }
+            }
             StateHasChanged();
         }
     }
