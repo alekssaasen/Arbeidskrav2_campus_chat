@@ -1,15 +1,22 @@
-﻿using Arbeidskrav2_campus_chat.Models;
+﻿using Arbeidskrav2_campus_chat.Data;
+using Arbeidskrav2_campus_chat.Models;
 
 namespace Arbeidskrav2_campus_chat.Service;
 
 public class DiscussionThreadService
 {
-    private readonly List<DiscussionThread> _threads = new();
-    private int _nextId = 1;
-
-    public DiscussionThread CreateThread(string title, string topic, string description)
+    private readonly List<DiscussionThread> _threads = SeedData.CreateThreads();
+    private readonly List<ThreadMembership> _threadMemberships = new();
+    private readonly UserService _userService;
+    private int _nextId = 7;
+    public DiscussionThreadService(UserService userService)
     {
-        var thread = DiscussionThread.Create(_nextId, title, topic, description);
+        _userService = userService;
+    }
+
+    public DiscussionThread CreateThread(string title, string topic, string description, bool isPrivate, string accessCode)
+    {
+        var thread = DiscussionThread.Create(_nextId, title, topic, description, isPrivate, accessCode);
         _nextId++;
         _threads.Add(thread);
         return thread;
