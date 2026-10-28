@@ -21,20 +21,23 @@ public class DiscussionThreadService
         _threads.Add(thread);
         return thread;
     }
-    public bool CanAccessThread(int threadId, int profileId, string? accessCode)
+    public bool CanAccessThread(int threadId, int? profileId, string? accessCode)
     {
-        var user = _userService.GetProfileById(profileId);
         var discussionThread = GetThreadById(threadId);
-        if (user.IsAudit || !discussionThread.IsPrivate)
+        if (!discussionThread.IsPrivate)
         {
             return true;
         }
-        if (discussionThread.IsPrivate && discussionThread.AccessCode != accessCode)
+        if (profileId == null)
         {
             return false;
         }
-
-        return discussionThread.AccessCode == accessCode;;
+        var user = _userService.GetProfileById(profileId.Value);
+        if (user.IsAudit)
+        {
+            return true;
+        }
+        return discussionThread.AccessCode == accessCode;
     }
 
     public List<DiscussionThread> GetAllThreads()
