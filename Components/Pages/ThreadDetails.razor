@@ -1,6 +1,8 @@
 ﻿@page "/threads/{ThreadId:int}"
 @inject DiscussionThreadService ThreadService
 @inject ThreadPostService PostService
+@inject CurrentUserService CurrentUserService
+@inject ProtectedSessionStorage SessionStorage
 
 @rendermode InteractiveServer
 <h3>ThreadDetails</h3>
