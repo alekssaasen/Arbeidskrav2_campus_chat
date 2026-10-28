@@ -16,7 +16,7 @@ public class UserService
         return user;
     }
 
-    public List<Profile> GetAllProfiles()
+    public IReadOnlyList<Profile> GetAllProfiles()
     {
         return new List<Profile>(_profiles);
     }

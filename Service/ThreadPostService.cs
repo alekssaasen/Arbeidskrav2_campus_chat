@@ -35,14 +35,14 @@ public class ThreadPostService
         _threadPosts.Add(threadPost);
         return threadPost;
     }
-    public IEnumerable<ThreadPost> GetPostsByThreadId(int id, int? profileId, string? accessCode)
+    public IReadOnlyList<ThreadPost> GetPostsByThreadId(int id, int? profileId, string? accessCode)
     {
         var access = _discussionThreadService.CanAccessThread(id, profileId, accessCode);
         if (!access)
         {
             throw new UnauthorizedAccessException("Unauthorized.");
         }
-        return _threadPosts.Where(t => t.ThreadId == id);
+        return _threadPosts.Where(t => t.ThreadId == id).ToList();
     }
     
     public ThreadPost GetPostById(int id)

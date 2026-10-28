@@ -39,7 +39,7 @@ public class DirectMessageService
         return false;
     }
     
-    public List<DirectMessage> GetMessages(int callerId, int userAId, int userBId)
+    public IReadOnlyList<DirectMessage> GetMessages(int callerId, int userAId, int userBId)
     {
         var userA = _userServices.GetProfileById(userAId);
         var userB = _userServices.GetProfileById(userBId);
@@ -55,7 +55,7 @@ public class DirectMessageService
 
         return conversation.ToList();
     }
-    public List<DirectMessage> GetConversations(int profileId)
+    public IReadOnlyList<DirectMessage> GetConversations(int profileId)
     {
         var userA = _userServices.GetProfileById(profileId);
         var messages = _directMessages.Where(dm => dm.SenderId == userA.Id || dm.ReceiverId == userA.Id);

@@ -29,7 +29,7 @@
 </table>
 
 @code {
-    private List<DiscussionThread> _threads = new();
+    private IReadOnlyList<DiscussionThread> _threads;
 
     protected override void OnInitialized()
     {
