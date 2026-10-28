@@ -35,7 +35,7 @@ public class ThreadPostService
         _threadPosts.Add(threadPost);
         return threadPost;
     }
-    public IEnumerable<ThreadPost> GetPostsByThreadId(int id, int profileId, string? accessCode)
+    public IEnumerable<ThreadPost> GetPostsByThreadId(int id, int? profileId, string? accessCode)
     {
         var access = _discussionThreadService.CanAccessThread(id, profileId, accessCode);
         if (!access)
