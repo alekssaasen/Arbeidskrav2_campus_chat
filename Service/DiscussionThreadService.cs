@@ -14,6 +14,21 @@ public class DiscussionThreadService
         _threads.Add(thread);
         return thread;
     }
+    public bool CanAccessThread(int threadId, int profileId, string? accessCode)
+    {
+        var user = _userService.GetProfileById(profileId);
+        var discussionThread = GetThreadById(threadId);
+        if (user.IsAudit || !discussionThread.IsPrivate)
+        {
+            return true;
+        }
+        if (discussionThread.IsPrivate && discussionThread.AccessCode != accessCode)
+        {
+            return false;
+        }
+
+        return discussionThread.AccessCode == accessCode;;
+    }
 
     public List<DiscussionThread> GetAllThreads()
     {
