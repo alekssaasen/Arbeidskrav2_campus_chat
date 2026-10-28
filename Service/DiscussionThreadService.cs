@@ -90,4 +90,14 @@ public class DiscussionThreadService
         }
         _threadMemberships.Remove(membership);
     }
+
+    public IEnumerable<DiscussionThread> GetJoinedThreads(int profileId)
+    {
+        var user = _userService.GetProfileById(profileId);
+        var joinedThreads = _threadMemberships
+            .Where(m => m.ProfileId == user.Id)
+            .Select(t => GetThreadById(t.ThreadId));
+
+        return joinedThreads;
+    }
 }
