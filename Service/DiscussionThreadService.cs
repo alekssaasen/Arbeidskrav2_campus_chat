@@ -70,10 +70,14 @@ public class DiscussionThreadService
         _threads.Remove(thread);
     }
 
-    public ThreadMembership JoinThread(int profileId, int threadId)
+    public ThreadMembership JoinThread(int profileId, int threadId, string? accessCode)
     {
         var profile = _userService.GetProfileById(profileId);
         var thread = GetThreadById(threadId);
+        if (!CanAccessThread(threadId, profileId, accessCode))
+        {
+            throw new UnauthorizedAccessException("Wrong code.");
+        }
         var isAlreadyMember = _threadMemberships.Any(t => t.ProfileId == profile.Id && t.ThreadId == thread.Id);
         if (!isAlreadyMember)
         {
