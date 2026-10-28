@@ -1,5 +1,6 @@
 using Arbeidskrav2_campus_chat.Components;
 using Arbeidskrav2_campus_chat.Service;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,7 @@ builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<DiscussionThreadService>();
 builder.Services.AddSingleton<ThreadPostService>();
 builder.Services.AddSingleton<DirectMessageService>();
-
+builder.Services.AddScoped<ProtectedSessionStorage>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

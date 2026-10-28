@@ -1,5 +1,7 @@
 ﻿@page "/threads/{ThreadId:int}"
 @inject DiscussionThreadService ThreadService
+@inject ThreadPostService PostService
+
 @rendermode InteractiveServer
 <h3>ThreadDetails</h3>
 @if (_thread != null)
@@ -17,6 +19,7 @@ else
     [Parameter]
     public int ThreadId { get; set; }
     private DiscussionThread? _thread;
+    private IEnumerable<ThreadPost>? _posts;
 
     protected override void OnParametersSet()
     {
