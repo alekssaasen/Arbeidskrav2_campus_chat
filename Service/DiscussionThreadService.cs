@@ -37,6 +37,11 @@ public class DiscussionThreadService
         {
             return true;
         }
+        var isMember = _threadMemberships.Any(m => m.ProfileId == profileId && m.ThreadId == threadId);
+        if (isMember)
+        {
+            return true;
+        }
         return discussionThread.AccessCode == accessCode;
     }
 
