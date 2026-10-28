@@ -18,7 +18,7 @@ public class ThreadPost
         int? parentPostId)
     
     {
-        ArgumentException.ThrowIfNullOrEmpty(content.Trim());
+        ArgumentException.ThrowIfNullOrWhiteSpace(content);
         return new ThreadPost
         {
             Id = id,
@@ -31,7 +31,7 @@ public class ThreadPost
     }
     public void Update(string content)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(content.Trim());
+        ArgumentException.ThrowIfNullOrWhiteSpace(content);
         Content = content.Trim();
     }
 }
