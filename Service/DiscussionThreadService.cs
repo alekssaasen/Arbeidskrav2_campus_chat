@@ -39,4 +39,33 @@ public class DiscussionThreadService
         var thread = GetThreadById(id);
         _threads.Remove(thread);
     }
+
+    public ThreadMembership JoinThread(int profileId, int threadId)
+    {
+        var profile = _userService.GetProfileById(profileId);
+        var thread = GetThreadById(threadId);
+        var isAlreadyMember = _threadMemberships.Any(t => t.ProfileId == profile.Id && t.ThreadId == thread.Id);
+        if (!isAlreadyMember)
+        {
+           var membership = ThreadMembership.Create(profileId, threadId);
+           _threadMemberships.Add(membership);
+           return membership;
+        }
+        else
+        {
+            throw new ArgumentException("You have already joined this thread.");
+        }
+    }
+    public void LeaveThread(int profileId, int threadId)
+    {
+        var profile = _userService.GetProfileById(profileId);
+        var thread = GetThreadById(threadId);
+        var membership = _threadMemberships
+            .FirstOrDefault(m => m.ProfileId == profile.Id && m.ThreadId == thread.Id);
+        if (membership == null)
+        {
+            throw new ArgumentException("You have not joined this thread.");
+        }
+        _threadMemberships.Remove(membership);
+    }
 }
