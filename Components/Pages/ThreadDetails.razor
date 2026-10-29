@@ -17,9 +17,23 @@ else
     <p>@_thread.Description</p>
 
     @* ---------- 2. Posts ---------- *@
+    
     @if (_needsCode)
     {
         <p>This thread is private. Enter the code to read it.</p>
+        @if (CurrentUserService.ProfileId == null)
+        {
+            <p><a href="login">Log in</a> to enter a code.</p>
+        }
+        else
+        {
+            <input class="form-control mb-2" @bind="_accessCode" placeholder="Access code" />
+            @if (_codeError != null)
+            {
+                <p class="text-danger">@_codeError</p>
+            }
+            <button class="btn btn-primary" @onclick="SubmitCode">Unlock</button>
+        }
     }
     else if (_posts == null)
     {
@@ -69,6 +83,8 @@ else
     private string _newContent = "";
     private string? _postError;
     private int? _replyToId;
+    private string _accessCode = "";
+    private string? _codeError;
 
     public void Dispose()
     {
@@ -114,7 +130,7 @@ else
         _postError = null;
         try
         {
-            PostService.CreatePost(CurrentUserService.ProfileId!.Value, ThreadId, _newContent, _replyToId, null);
+            PostService.CreatePost(CurrentUserService.ProfileId!.Value, ThreadId, _newContent, _replyToId, _accessCode);
             _newContent = "";
             _replyToId = null;
             LoadPosts();
@@ -128,14 +144,24 @@ else
             _postError = ex.Message;
         }
     }
+    private void SubmitCode()
+    {
+        _codeError = null;
+        LoadPosts();
+        if (_needsCode)
+        {
+            _codeError = "Wrong code.";
+        }
+    }
     private void LoadPosts()
     {
         if (_thread == null) return;
         try
         {
             _posts = PostService
-                .GetPostsByThreadId(ThreadId, CurrentUserService.ProfileId, null)
+                .GetPostsByThreadId(ThreadId, CurrentUserService.ProfileId, _accessCode)
                 .ToList();
+            _needsCode = false;
         }
         catch (UnauthorizedAccessException)
         {
