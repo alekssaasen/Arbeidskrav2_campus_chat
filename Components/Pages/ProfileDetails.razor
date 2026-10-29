@@ -1,0 +1,62 @@
+﻿@page "/profiles/{ProfileId:int}"
+@rendermode InteractiveServer
+@inject UserService UserService
+@inject CurrentUserService CurrentUserService
+@inject DiscussionThreadService DiscussionThreadService
+@if (_profile == null)
+{
+    <p>Profile not found.</p>
+}
+else
+{
+    <div class="d-flex align-items-center mb-3">
+        <div class="rounded-circle me-3" style="width:48px; height:48px; background:@_profile.AvatarColor"></div>
+        <h3 class="mb-0">@_profile.UserName</h3>
+    </div>
+    <p>@(_profile.Bio ?? "No bio yet.")</p>
+    <p class="text-muted">Started @_profile.SchoolYear.ToString("MMMM yyyy")</p>
+
+    <h5>Threads joined</h5>
+    @if (!_joinedThreads.Any())
+    {
+        <p>Not a member of any threads yet.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var thread in _joinedThreads)
+            {
+                <li><a href="/threads/@thread.Id">@thread.Title</a></li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    [Parameter] public int ProfileId { get; set; }
+    private Profile? _profile;
+    private IReadOnlyList<DiscussionThread> _joinedThreads = [];
+
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            _profile = UserService.GetProfileById(ProfileId);
+            _joinedThreads = DiscussionThreadService.GetJoinedThreads(ProfileId);
+        }
+        catch (KeyNotFoundException)
+        {
+            _profile = null;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CurrentUserService.RestoreProfileAsync();
+            StateHasChanged();
+        }
+    }
+
+}
