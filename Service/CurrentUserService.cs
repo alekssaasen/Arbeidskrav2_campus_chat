@@ -7,6 +7,7 @@ public class CurrentUserService
     
     private readonly ProtectedSessionStorage _storage;
     public bool IsLoaded { get; private set; }
+    public event Action? ProfileChanged;
 
     public CurrentUserService(ProtectedSessionStorage storage)
     {
@@ -17,6 +18,7 @@ public class CurrentUserService
     {
         await _storage.SetAsync("profileId", profileId);
         ProfileId = profileId;
+        ProfileChanged?.Invoke();
     }
 
     public async Task RestoreProfileAsync()
