@@ -65,7 +65,7 @@ public class ThreadPostService
         {
             throw new UnauthorizedAccessException("This post does not belong to you.");
         }
-        _threadPosts.Remove(post);
+        post.MarkDeleted();
         PostsChanged?.Invoke(post.ThreadId);
 
     }

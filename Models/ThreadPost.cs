@@ -8,6 +8,7 @@ public class ThreadPost
     public string Content { get; private set; } = string.Empty;
     public int? ParentPostId { get; private set; }
     public DateTime CreatedAt { get; private set; }
+    public bool IsDeleted { get; private set; }
 
     private ThreadPost() { }
     public static ThreadPost Create(
@@ -36,5 +37,11 @@ public class ThreadPost
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(content);
         Content = content.Trim();
+    }
+
+    public void MarkDeleted()
+    {
+        IsDeleted = true;
+        Content = string.Empty;
     }
 }
