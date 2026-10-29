@@ -1,9 +1,10 @@
 ﻿@rendermode InteractiveServer
 @inject CurrentUserService CurrentUserService
 @inject UserService UserService
+@implements IDisposable
 @if (!CurrentUserService.IsLoaded)
 {
-    <p></p>
+    <p>Loading...</p>
 } else if (_userName == null)
 {
     <a href="login">Login</a>
@@ -22,20 +23,39 @@ else
     {
         if (firstRender)
         {
-            try
-            {
-                await CurrentUserService.RestoreProfileAsync();
-                if (CurrentUserService.ProfileId.HasValue)
-                {
-                    _userName = UserService.GetProfileById(CurrentUserService.ProfileId.Value).UserName;
-                }
-            }
-            catch (KeyNotFoundException)
-            {
-                _userName = null;
-            }
-
+            await CurrentUserService.RestoreProfileAsync();
+            LoadUserName();
+            CurrentUserService.ProfileChanged += OnProfileChanged;
             StateHasChanged();
         }
+    }
+    
+    private void OnProfileChanged()
+    {
+        InvokeAsync(() =>
+        {
+            LoadUserName();
+            StateHasChanged();
+        });
+    }
+    private void LoadUserName()
+    {
+        try
+        {
+            _userName = null;
+            if (CurrentUserService.ProfileId.HasValue)
+            {
+                _userName = UserService.GetProfileById(CurrentUserService.ProfileId.Value).UserName;
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            _userName = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        CurrentUserService.ProfileChanged -= OnProfileChanged;
     }
 }
