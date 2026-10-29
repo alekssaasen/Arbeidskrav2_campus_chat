@@ -8,6 +8,7 @@ public class ThreadPostService
     private int _nextId = 1;
     private readonly DiscussionThreadService _discussionThreadService;
     private readonly UserService _userService;
+    public event Action<int>? PostsChanged;
     public ThreadPostService(DiscussionThreadService discussionThreadService, UserService userService)
     {
         _discussionThreadService = discussionThreadService;
@@ -33,6 +34,7 @@ public class ThreadPostService
         var threadPost = ThreadPost.Create(_nextId, profile.Id, discussionThread.Id ,content, parentId);
         _nextId++;
         _threadPosts.Add(threadPost);
+        PostsChanged?.Invoke(threadPost.ThreadId);
         return threadPost;
     }
     public IReadOnlyList<ThreadPost> GetPostsByThreadId(int id, int? profileId, string? accessCode)
@@ -64,6 +66,7 @@ public class ThreadPostService
             throw new UnauthorizedAccessException("This post does not belong to you.");
         }
         _threadPosts.Remove(post);
+        PostsChanged?.Invoke(post.ThreadId);
 
     }
 }
