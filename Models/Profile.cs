@@ -32,13 +32,13 @@ public class Profile
     }
     public void Update(
         string userName,
-        string bio,
+        string? bio,
         string avatarColor,
         DateOnly schoolYear)
     {
         Validate(userName, avatarColor, schoolYear);
         UserName = userName.Trim();
-        Bio = bio.Trim();
+        Bio = bio?.Trim();
         AvatarColor = avatarColor.Trim();
         SchoolYear = schoolYear;
     }
@@ -55,7 +55,7 @@ public class Profile
         }
         if (string.IsNullOrWhiteSpace(avatarColor))
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(avatarColor.Trim());
+            throw new ArgumentException("Avatar color is required");
         }
     }
 }

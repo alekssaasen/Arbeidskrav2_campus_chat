@@ -9,9 +9,8 @@ public class DiscussionThread
     public bool IsPrivate { get; private set; }
     private string? AccessCode { get; set; } 
     public DateTime CreatedAt { get; private set; }
-    public List<ThreadPost> ThreadPosts { get; set; } = new List<ThreadPost>();
 
-    public DiscussionThread() { }
+    private DiscussionThread() { }
     public static DiscussionThread Create(
         int id,
         string title,

@@ -9,7 +9,7 @@ public class ThreadPost
     public int? ParentPostId { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    public ThreadPost() { }
+    private ThreadPost() { }
     public static ThreadPost Create(
         int id, 
         int authorId, 
