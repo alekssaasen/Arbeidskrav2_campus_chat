@@ -7,7 +7,7 @@ public class DiscussionThread
     public string Topic { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
     public bool IsPrivate { get; private set; }
-    public string AccessCode { get; private set; } = string.Empty;
+    private string? AccessCode { get; set; } 
     public DateTime CreatedAt { get; private set; }
     public List<ThreadPost> ThreadPosts { get; set; } = new List<ThreadPost>();
 
@@ -49,5 +49,14 @@ public class DiscussionThread
         Title = title.Trim();
         Topic = topic.Trim();
         Description = description.Trim();
+    }
+
+    public bool IsCorrectCode(string? code)
+    {
+        if (AccessCode == code)
+        {
+            return true;
+        }
+        return false;
     }
 }

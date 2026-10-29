@@ -42,7 +42,7 @@ public class DiscussionThreadService
         {
             return true;
         }
-        return discussionThread.AccessCode == accessCode;
+        return discussionThread.IsCorrectCode(accessCode);
     }
 
     public IReadOnlyList<DiscussionThread> GetAllThreads()
