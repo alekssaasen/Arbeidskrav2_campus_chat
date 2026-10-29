@@ -2,7 +2,7 @@
 
 <div class="card mb-2">
     <div class="card-body py-2">
-        <strong>@_authorName</strong>
+        <a href="/profiles/@Post.AuthorId"><strong>@_authorName</strong></a>
         <small class="text-muted ms-2">@Post.CreatedAt.ToLocalTime().ToString("g")</small>
         @if (Post.IsDeleted)
         {
