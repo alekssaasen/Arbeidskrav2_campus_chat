@@ -40,7 +40,7 @@ else
     [Parameter]
     public int ThreadId { get; set; }
     private DiscussionThread? _thread;
-    private IEnumerable<ThreadPost>? _posts;
+    private IReadOnlyList<ThreadPost>? _posts;
     private bool _needsCode;
 
 
