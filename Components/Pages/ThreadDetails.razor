@@ -31,9 +31,9 @@ else
     }
     else
     {
-        @foreach (var post in _posts)
+        @foreach (var post in _posts.Where(p => p.ParentPostId == null))
         {
-            <PostCard Post="post"/>
+            <PostCard Post="post" AllPosts="_posts" CurrentUserId="CurrentUserService.ProfileId" OnReply="StartReply" />
         }
     }
 
@@ -44,6 +44,13 @@ else
     }
     else if (!_needsCode)
     {
+        if (_replyToId != null)
+        {
+            <p class="small mb-1">
+                Replying to a post
+                <button class="btn btn-sm btn-link p-0 ms-2" @onclick="CancelReply">Cancel</button>
+            </p>
+        }
         <textarea class="form-control mb-2" @bind="_newContent" placeholder="Write a post…"></textarea>
         @if (_postError != null)
         {
@@ -61,6 +68,17 @@ else
     private bool _needsCode;
     private string _newContent = "";
     private string? _postError;
+    private int? _replyToId;
+
+    private void StartReply(int postId)
+    {
+        _replyToId = postId;
+    }
+    
+    private void CancelReply()
+    {
+        _replyToId = null;
+    }
 
     public void Dispose()
     {
@@ -84,8 +102,9 @@ else
         _postError = null;
         try
         {
-            PostService.CreatePost(CurrentUserService.ProfileId!.Value, ThreadId, _newContent, null, null);
+            PostService.CreatePost(CurrentUserService.ProfileId!.Value, ThreadId, _newContent, _replyToId, null);
             _newContent = "";
+            _replyToId = null;
             LoadPosts();
         }
         catch (ArgumentException ex)
