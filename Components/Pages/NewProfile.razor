@@ -1,6 +1,52 @@
-﻿@page "/NewProfile"
-<h3>NewProfile</h3>
+﻿@page "/profiles/new"
+@rendermode InteractiveServer
+@inject UserService UserService
+@inject CurrentUserService CurrentUserService
+@inject NavigationManager Navigation
+
+<h3>Create a profile</h3>
+
+<div class="mb-2">
+    <label class="form-label">Display name</label>
+    <input class="form-control" @bind="_name" />
+</div>
+<div class="mb-2">
+    <label class="form-label">About you</label>
+    <textarea class="form-control" @bind="_bio"></textarea>
+</div>
+<div class="mb-2">
+    <label class="form-label">Avatar colour</label>
+    <input type="color" class="form-control form-control-color" @bind="_color" />
+</div>
+<div class="mb-2">
+    <label class="form-label">Started studying</label>
+    <input type="date" class="form-control" @bind="_schoolYear" />
+</div>
+@if (_error != null)
+{
+    <p class="text-danger">@_error</p>
+}
+<button class="btn btn-primary" @onclick="Create">Create profile</button>
 
 @code {
-    
+    private string _name = "";
+    private string? _bio;
+    private string _color = "#808080";
+    private DateOnly _schoolYear = DateOnly.FromDateTime(DateTime.Today);
+    private string? _error;
+
+    private async Task Create()
+    {
+        _error = null;
+        try
+        {
+            var profile = UserService.CreateProfile(_name, _bio, false, _color, _schoolYear);
+            await CurrentUserService.SetProfileAsync(profile.Id);
+            Navigation.NavigateTo($"/profiles/{profile.Id}");
+        }
+        catch (ArgumentException ex)
+        {
+            _error = ex.Message;
+        }
+    }
 }
