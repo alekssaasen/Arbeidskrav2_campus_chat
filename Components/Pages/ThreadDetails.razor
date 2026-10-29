@@ -3,6 +3,7 @@
 @inject ThreadPostService PostService
 @inject CurrentUserService CurrentUserService
 @inject ProtectedSessionStorage SessionStorage
+@inject IDisposable
 
 @rendermode InteractiveServer
 <h3>ThreadDetails</h3>
@@ -43,6 +44,10 @@ else
     private IReadOnlyList<ThreadPost>? _posts;
     private bool _needsCode;
 
+    public void Dispose()
+    {
+        PostService.PostsChanged -= OnPostsChanged;
+    }
 
     protected override void OnParametersSet()
     {
@@ -55,23 +60,39 @@ else
             _thread = null;
         }
     }
+    private void LoadPosts()
+    {
+        try
+        {
+            _posts = PostService
+                .GetPostsByThreadId(ThreadId, CurrentUserService.ProfileId, null)
+                .ToList();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            _needsCode = true; 
+        }
+        StateHasChanged();
+    }
+
+    private void OnPostsChanged(int threadId)
+    {
+        if (threadId != ThreadId) return;
+
+        InvokeAsync(() =>
+        {
+            LoadPosts();
+            StateHasChanged();
+        });
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await CurrentUserService.RestoreProfileAsync();
             
-            try
-            {
-                _posts = PostService
-                    .GetPostsByThreadId(ThreadId, CurrentUserService.ProfileId, null)
-                    .ToList();
-            }
-            catch (UnauthorizedAccessException)
-            {
-                _needsCode = true; 
-            }
-            StateHasChanged();
+            LoadPosts();
+            PostService.PostsChanged += OnPostsChanged;
         }
     }
 }
