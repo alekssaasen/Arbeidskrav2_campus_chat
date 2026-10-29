@@ -3,32 +3,66 @@
 @inject UserService UserService
 @inject CurrentUserService CurrentUserService
 @inject DiscussionThreadService DiscussionThreadService
+
 @if (_profile == null)
 {
     <p>Profile not found.</p>
 }
 else
 {
-    <div class="d-flex align-items-center mb-3">
-        <div class="rounded-circle me-3" style="width:48px; height:48px; background:@_profile.AvatarColor"></div>
-        <h3 class="mb-0">@_profile.UserName</h3>
-    </div>
-    <p>@(_profile.Bio ?? "No bio yet.")</p>
-    <p class="text-muted">Started @_profile.SchoolYear.ToString("MMMM yyyy")</p>
-
-    <h5>Threads joined</h5>
-    @if (!_joinedThreads.Any())
+    @if (!_isEditing)
     {
-        <p>Not a member of any threads yet.</p>
+        <div class="d-flex align-items-center mb-3">
+            <div class="rounded-circle me-3" style="width:48px; height:48px; background:@_profile.AvatarColor"></div>
+            <h3 class="mb-0">@_profile.UserName</h3>
+        </div>
+        <p>@(_profile.Bio ?? "No bio yet.")</p>
+        <p class="text-muted">Started @_profile.SchoolYear.ToString("MMMM yyyy")</p>
+
+        @if (CurrentUserService.ProfileId == ProfileId)
+        {
+            <button class="btn btn-outline-primary btn-sm mb-3" @onclick="StartEdit">Edit profile</button>
+        }
+
+        <h5>Threads joined</h5>
+        @if (!_joinedThreads.Any())
+        {
+            <p>Not a member of any threads yet.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var thread in _joinedThreads)
+                {
+                    <li><a href="/threads/@thread.Id">@thread.Title</a></li>
+                }
+            </ul>
+        }
     }
     else
     {
-        <ul>
-            @foreach (var thread in _joinedThreads)
-            {
-                <li><a href="/threads/@thread.Id">@thread.Title</a></li>
-            }
-        </ul>
+        <div class="mb-2">
+            <label class="form-label">Display name</label>
+            <input class="form-control" @bind="_editName" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">About you</label>
+            <textarea class="form-control" @bind="_editBio"></textarea>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Avatar colour</label>
+            <input type="color" class="form-control form-control-color" @bind="_editColor" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Started studying</label>
+            <input type="date" class="form-control" @bind="_editSchoolYear" />
+        </div>
+        @if (_editError != null)
+        {
+            <p class="text-danger">@_editError</p>
+        }
+        <button class="btn btn-primary" @onclick="SaveEdit">Save</button>
+        <button class="btn btn-link" @onclick="CancelEdit">Cancel</button>
     }
 }
 
@@ -36,6 +70,12 @@ else
     [Parameter] public int ProfileId { get; set; }
     private Profile? _profile;
     private IReadOnlyList<DiscussionThread> _joinedThreads = [];
+    private bool _isEditing;
+    private string _editName = "";
+    private string? _editBio;
+    private string _editColor = "";
+    private DateOnly _editSchoolYear;
+    private string? _editError;
 
     protected override void OnParametersSet()
     {
@@ -56,6 +96,40 @@ else
         {
             await CurrentUserService.RestoreProfileAsync();
             StateHasChanged();
+        }
+    }
+
+    private void StartEdit()
+    {
+        _editName = _profile!.UserName;
+        _editBio = _profile!.Bio;
+        _editColor = _profile!.AvatarColor;
+        _editSchoolYear = _profile.SchoolYear;
+        _editError = null;
+        _isEditing= true;
+    }
+
+    private void CancelEdit()
+    {
+        _isEditing = false;
+    }
+
+    private void SaveEdit()
+    {
+        _editError = null;
+        try
+        {
+            UserService.UpdateProfile(CurrentUserService.ProfileId!.Value, ProfileId, _editName, _editBio, _editColor, _editSchoolYear);
+            _isEditing = false;
+            CurrentUserService.NotifyProfileChange();
+        }
+        catch (ArgumentException ex)
+        {
+            _editError = ex.Message;
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _editError = ex.Message;
         }
     }
 
