@@ -26,7 +26,7 @@
 <div class="ms-4">
     @foreach (var reply in AllPosts.Where(p => p.ParentPostId == Post.Id))
     {
-        <PostCard Post="reply" AllPosts="AllPosts" CurrentUserId="CurrentUserId" OnReply="OnReply" />
+        <PostCard Post="reply" AllPosts="AllPosts" CurrentUserId="CurrentUserId" OnReply="OnReply" OnDelete="OnDelete" />
     }
 </div>
 
