@@ -30,8 +30,12 @@ public class UserService
         }
         return user;
     }
-    public void UpdateProfile(int id, string userName, string bio, string avatarColor, DateOnly schoolYear)
+    public void UpdateProfile(int callerId, int id, string userName, string? bio, string avatarColor, DateOnly schoolYear)
     {
+        if (callerId != id)
+        {
+            throw new UnauthorizedAccessException("You can only edit your own profile.");
+        }
         var profile = GetProfileById(id);
         profile.Update(userName, bio, avatarColor, schoolYear);
     }
