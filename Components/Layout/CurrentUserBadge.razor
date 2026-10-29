@@ -1,0 +1,41 @@
+﻿@rendermode InteractiveServer
+@inject CurrentUserService CurrentUserService
+@inject UserService UserService
+@if (!CurrentUserService.IsLoaded)
+{
+    <p></p>
+} else if (_userName == null)
+{
+    <a href="login">Login</a>
+}
+else
+{
+    <p>Logged in as <strong>@_userName</strong></p>
+}
+
+
+
+@code {
+    private string? _userName;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await CurrentUserService.RestoreProfileAsync();
+                if (CurrentUserService.ProfileId.HasValue)
+                {
+                    _userName = UserService.GetProfileById(CurrentUserService.ProfileId.Value).UserName;
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                _userName = null;
+            }
+
+            StateHasChanged();
+        }
+    }
+}
