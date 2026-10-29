@@ -6,6 +6,7 @@ public class DirectMessageService
     private readonly List<DirectMessage> _directMessages = new();
     private int _nextId = 1;
     private readonly UserService _userServices;
+    public event Action<int, int>? MessageSent;
 
     public DirectMessageService(UserService userServices)
     {
@@ -19,6 +20,7 @@ public class DirectMessageService
         var dM = DirectMessage.Create(_nextId, userA.Id, userB.Id, message);
         _nextId++;
         _directMessages.Add(dM);
+        MessageSent?.Invoke(senderId, receiverId);
         return dM;
     }
     private bool CanReadConversation(int callerId, int userAId, int userBId)
