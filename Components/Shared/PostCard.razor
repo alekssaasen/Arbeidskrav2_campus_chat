@@ -1,0 +1,28 @@
+﻿@inject UserService UserService
+
+<div class="card mb-2">
+    <div class="card-body py-2">
+        <strong>@_authorName</strong>
+        <small class="text-muted ms-2">@Post.CreatedAt.ToLocalTime().ToString("g")</small>
+        <p class="mb-0">@Post.Content</p>
+    </div>
+</div>
+
+@code {
+    [Parameter] public required ThreadPost Post { get; set; }
+
+    private string _authorName = "";
+
+    protected override void OnParametersSet()
+    {
+        try
+        {
+            _authorName = UserService.GetProfileById(Post.AuthorId).UserName;
+        }
+        catch (KeyNotFoundException)
+        {
+            _authorName = "Former student";
+        }
+    }
+
+}
