@@ -37,14 +37,17 @@ public class DiscussionThreadService
         {
             return true;
         }
-        var isMember = _threadMemberships.Any(m => m.ProfileId == profileId && m.ThreadId == threadId);
-        if (isMember)
+        if (IsMember(profileId.Value, threadId))
         {
             return true;
         }
         return discussionThread.IsCorrectCode(accessCode);
     }
 
+    public bool IsMember(int profileId, int threadId)
+    {
+        return _threadMemberships.Any(m => m.ProfileId == profileId && m.ThreadId == threadId);
+    }
     public IReadOnlyList<DiscussionThread> GetAllThreads()
     {
         return new List<DiscussionThread>(_threads);
@@ -111,5 +114,16 @@ public class DiscussionThreadService
             .Select(t => GetThreadById(t.ThreadId));
 
         return joinedThreads.ToList();
+    }
+
+    public IReadOnlyList<DiscussionThread> SearchThreads(string? searchTerm)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return GetAllThreads();
+        }
+        return _threads
+            .Where(t => t.Title.Contains(searchTerm.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToList();
     }
 }
