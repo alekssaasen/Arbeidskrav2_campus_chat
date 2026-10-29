@@ -18,7 +18,10 @@ public class ThreadPost
         int? parentPostId)
     
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(content);
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            throw new ArgumentException("A post can't be empty");
+        }
         return new ThreadPost
         {
             Id = id,
