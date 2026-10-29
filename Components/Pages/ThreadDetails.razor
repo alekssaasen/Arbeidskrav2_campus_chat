@@ -61,6 +61,7 @@ else
     }
     private void LoadPosts()
     {
+        if (_thread == null) return;
         try
         {
             _posts = PostService
