@@ -2,8 +2,7 @@
 @inject DiscussionThreadService ThreadService
 @inject ThreadPostService PostService
 @inject CurrentUserService CurrentUserService
-@inject ProtectedSessionStorage SessionStorage
-@inject IDisposable
+@implements IDisposable
 
 @rendermode InteractiveServer
 <h3>ThreadDetails</h3>
@@ -72,7 +71,6 @@ else
         {
             _needsCode = true; 
         }
-        StateHasChanged();
     }
 
     private void OnPostsChanged(int threadId)
@@ -92,6 +90,7 @@ else
             await CurrentUserService.RestoreProfileAsync();
             
             LoadPosts();
+            StateHasChanged();
             PostService.PostsChanged += OnPostsChanged;
         }
     }
