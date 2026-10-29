@@ -4,12 +4,22 @@
     <div class="card-body py-2">
         <strong>@_authorName</strong>
         <small class="text-muted ms-2">@Post.CreatedAt.ToLocalTime().ToString("g")</small>
-        <p class="mb-0">@Post.Content</p>
-        @if (CurrentUserId != null)
+        @if (Post.IsDeleted)
         {
-            <button class="btn btn-sm btn-link p-0" @onclick="() => OnReply.InvokeAsync(Post.Id)">
-                Reply
-            </button>
+            <p class="mb-0 text-muted fst-italic">This post was deleted.</p>
+        }
+        else
+        {
+            <p class="mb-0">@Post.Content</p>
+        }
+        @if (CurrentUserId != null && !Post.IsDeleted)
+        {
+            <button class="btn btn-sm btn-link p-0" @onclick="() => OnReply.InvokeAsync(Post.Id)">Reply</button>
+
+            @if (Post.AuthorId == CurrentUserId)
+            {
+                <button class="btn btn-sm btn-link text-danger p-0 ms-2" @onclick="() => OnDelete.InvokeAsync(Post.Id)">Delete</button>
+            }
         }
     </div>
 </div>
@@ -24,6 +34,7 @@
     [Parameter] public required ThreadPost Post { get; set; }
     [Parameter] public int? CurrentUserId { get; set; }
     [Parameter] public EventCallback<int> OnReply { get; set; }
+    [Parameter] public EventCallback<int> OnDelete { get; set; }
     [Parameter] public IReadOnlyList<ThreadPost> AllPosts { get; set; } = [];
     private string _authorName = "";
 

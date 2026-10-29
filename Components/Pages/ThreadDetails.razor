@@ -33,7 +33,7 @@ else
     {
         @foreach (var post in _posts.Where(p => p.ParentPostId == null))
         {
-            <PostCard Post="post" AllPosts="_posts" CurrentUserId="CurrentUserService.ProfileId" OnReply="StartReply" />
+            <PostCard Post="post" AllPosts="_posts" CurrentUserId="CurrentUserService.ProfileId" OnReply="StartReply" OnDelete="HandleDeletePost" />
         }
     }
 
@@ -70,16 +70,6 @@ else
     private string? _postError;
     private int? _replyToId;
 
-    private void StartReply(int postId)
-    {
-        _replyToId = postId;
-    }
-    
-    private void CancelReply()
-    {
-        _replyToId = null;
-    }
-
     public void Dispose()
     {
         PostService.PostsChanged -= OnPostsChanged;
@@ -94,6 +84,28 @@ else
         catch (KeyNotFoundException)
         {
             _thread = null;
+        }
+    }
+    
+    private void OnPostsChanged(int threadId)
+    {
+        if (threadId != ThreadId) return;
+
+        InvokeAsync(() =>
+        {
+            LoadPosts();
+            StateHasChanged();
+        });
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CurrentUserService.RestoreProfileAsync();
+            
+            LoadPosts();
+            StateHasChanged();
+            PostService.PostsChanged += OnPostsChanged;
         }
     }
 
@@ -131,25 +143,26 @@ else
         }
     }
 
-    private void OnPostsChanged(int threadId)
+    private void HandleDeletePost(int postId)
     {
-        if (threadId != ThreadId) return;
-
-        InvokeAsync(() =>
+        _postError = null;
+        try
         {
-            LoadPosts();
-            StateHasChanged();
-        });
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await CurrentUserService.RestoreProfileAsync();
-            
-            LoadPosts();
-            StateHasChanged();
-            PostService.PostsChanged += OnPostsChanged;
+            PostService.DeletePost(postId, CurrentUserService.ProfileId!.Value);
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            _postError = ex.Message;
+        }
+    }
+    
+    private void StartReply(int postId)
+    {
+        _replyToId = postId;
+    }
+    
+    private void CancelReply()
+    {
+        _replyToId = null;
     }
 }
