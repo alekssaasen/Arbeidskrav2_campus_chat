@@ -67,7 +67,7 @@
         _threads = ThreadService.GetAllThreads();
     }
 
-    public void Search()
+    private void Search()
     {
         _threads = ThreadService.SearchThreads(_searchTerm);
     }
