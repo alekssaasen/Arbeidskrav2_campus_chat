@@ -15,6 +15,17 @@ else
     <h3>@_thread.Title</h3>
     <p class="text-muted">@_thread.Topic</p>
     <p>@_thread.Description</p>
+    @if (CurrentUserService.ProfileId != null && !_needsCode && _posts != null)
+    {
+        @if (_isMember)
+        {
+            <button class="btn btn-outline-secondary btn-sm mb-3" @onclick="HandleLeave">Leave thread</button>
+        }
+        else
+        {
+            <button class="btn btn-outline-primary btn-sm mb-3" @onclick="HandleJoin">Join thread</button>
+        }
+    }
 
     @* ---------- 2. Posts ---------- *@
     
@@ -85,6 +96,7 @@ else
     private int? _replyToId;
     private string _accessCode = "";
     private string? _codeError;
+    private bool _isMember;
 
     public void Dispose()
     {
@@ -162,6 +174,7 @@ else
                 .GetPostsByThreadId(ThreadId, CurrentUserService.ProfileId, _accessCode)
                 .ToList();
             _needsCode = false;
+            _isMember = CurrentUserService.ProfileId != null && ThreadService.IsMember(CurrentUserService.ProfileId.Value, ThreadId);
         }
         catch (UnauthorizedAccessException)
         {
@@ -190,5 +203,41 @@ else
     private void CancelReply()
     {
         _replyToId = null;
+    }
+
+    private void HandleJoin()
+    {
+        _postError = null;
+        try
+        {
+            ThreadService.JoinThread(CurrentUserService.ProfileId!.Value, ThreadId, _accessCode);
+            _isMember = true;
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _postError = ex.Message;
+        }
+        catch (ArgumentException ex)
+        {
+            _postError = ex.Message;
+        }
+    }
+    
+    private void HandleLeave()
+    {
+        _postError = null;
+        try
+        {
+            ThreadService.LeaveThread(CurrentUserService.ProfileId!.Value, ThreadId);
+            _isMember = false;
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            _postError = ex.Message;
+        }
+        catch (ArgumentException ex)
+        {
+            _postError = ex.Message;
+        }
     }
 }
