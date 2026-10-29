@@ -6,7 +6,12 @@ namespace Arbeidskrav2_campus_chat.Service;
 public class UserService
 {
     private readonly List<Profile> _profiles = SeedData.CreateProfiles();
-    private int _nextId = 7;
+    private int _nextId;
+
+    public UserService()
+    {
+        _nextId = _profiles.Max(p => p.Id) + 1;
+    }
 
     public Profile CreateProfile(string name, string? bio, bool isAudit, string avatarColor, DateOnly schoolYear)
     {
