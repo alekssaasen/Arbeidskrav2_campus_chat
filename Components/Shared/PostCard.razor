@@ -5,12 +5,26 @@
         <strong>@_authorName</strong>
         <small class="text-muted ms-2">@Post.CreatedAt.ToLocalTime().ToString("g")</small>
         <p class="mb-0">@Post.Content</p>
+        @if (CurrentUserId != null)
+        {
+            <button class="btn btn-sm btn-link p-0" @onclick="() => OnReply.InvokeAsync(Post.Id)">
+                Reply
+            </button>
+        }
     </div>
+</div>
+<div class="ms-4">
+    @foreach (var reply in AllPosts.Where(p => p.ParentPostId == Post.Id))
+    {
+        <PostCard Post="reply" AllPosts="AllPosts" CurrentUserId="CurrentUserId" OnReply="OnReply" />
+    }
 </div>
 
 @code {
     [Parameter] public required ThreadPost Post { get; set; }
-
+    [Parameter] public int? CurrentUserId { get; set; }
+    [Parameter] public EventCallback<int> OnReply { get; set; }
+    [Parameter] public IReadOnlyList<ThreadPost> AllPosts { get; set; } = [];
     private string _authorName = "";
 
     protected override void OnParametersSet()
