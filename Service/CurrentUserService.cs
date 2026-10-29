@@ -20,6 +20,10 @@ public class CurrentUserService
         ProfileId = profileId;
         ProfileChanged?.Invoke();
     }
+    public void NotifyProfileChange()
+    {
+        ProfileChanged?.Invoke();
+    }
 
     public async Task RestoreProfileAsync()
     {
