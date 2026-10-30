@@ -9,7 +9,7 @@ public class DiscussionThreadService
     private readonly List<ThreadMembership> _threadMemberships = new();
     private readonly UserService _userService;
     private int _nextId;
-    public DiscussionThreadService(UserService userService, int nextId)
+    public DiscussionThreadService(UserService userService)
     {
         _userService = userService;
         _nextId = _threads.Max(p => p.Id) + 1;
