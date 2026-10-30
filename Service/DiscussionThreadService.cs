@@ -8,10 +8,11 @@ public class DiscussionThreadService
     private readonly List<DiscussionThread> _threads = SeedData.CreateThreads();
     private readonly List<ThreadMembership> _threadMemberships = new();
     private readonly UserService _userService;
-    private int _nextId = 7;
-    public DiscussionThreadService(UserService userService)
+    private int _nextId;
+    public DiscussionThreadService(UserService userService, int nextId)
     {
         _userService = userService;
+        _nextId = _threads.Max(p => p.Id) + 1;
     }
 
     public DiscussionThread CreateThread(string title, string topic, string description, bool isPrivate, string accessCode)
