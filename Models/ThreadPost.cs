@@ -11,6 +11,16 @@ public class ThreadPost
     public bool IsDeleted { get; private set; }
 
     private ThreadPost() { }
+    /// <summary>
+    /// Creates a new instance of <see cref="ThreadPost"/>.
+    /// </summary>
+    /// <param name="id">The unique ID for the post.</param>
+    /// <param name="authorId">The ID of the author's profile.</param>
+    /// <param name="threadId">The ID of the thread this post belongs to.</param>
+    /// <param name="content">The content of the post.</param>
+    /// <param name="parentPostId">The ID of the parent post, if this is a reply.</param>
+    /// <returns>A new <see cref="ThreadPost"/> instance.</returns>
+    /// <exception cref="ArgumentException">Thrown if the content is null or whitespace.</exception>
     public static ThreadPost Create(
         int id, 
         int authorId, 
@@ -33,12 +43,21 @@ public class ThreadPost
             CreatedAt = DateTime.UtcNow
         };
     }
+
+    /// <summary>
+    /// Updates the content of the post.
+    /// </summary>
+    /// <param name="content">The new content.</param>
+    /// <exception cref="ArgumentException">Thrown if the content is null or whitespace.</exception>
     public void Update(string content)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(content);
         Content = content.Trim();
     }
 
+    /// <summary>
+    /// Marks the post as deleted, clearing its content.
+    /// </summary>
     public void MarkDeleted()
     {
         IsDeleted = true;

@@ -11,6 +11,17 @@ public class DiscussionThread
     public DateTime CreatedAt { get; private set; }
 
     private DiscussionThread() { }
+    /// <summary>
+    /// Creates a new instance of <see cref="DiscussionThread"/>.
+    /// </summary>
+    /// <param name="id">The unique ID for the thread.</param>
+    /// <param name="title">The title of the thread.</param>
+    /// <param name="topic">The topic of the thread.</param>
+    /// <param name="description">The description of the thread.</param>
+    /// <param name="isPrivate">Whether the thread is private.</param>
+    /// <param name="accessCode">The access code required for private threads.</param>
+    /// <returns>A new <see cref="DiscussionThread"/> instance.</returns>
+    /// <exception cref="ArgumentException">Thrown if any required parameter is invalid.</exception>
     public static DiscussionThread Create(
         int id,
         string title,
@@ -40,6 +51,14 @@ public class DiscussionThread
             CreatedAt = DateTime.UtcNow
         };
     }
+
+    /// <summary>
+    /// Updates the thread's basic information.
+    /// </summary>
+    /// <param name="title">The new title.</param>
+    /// <param name="topic">The new topic.</param>
+    /// <param name="description">The new description.</param>
+    /// <exception cref="ArgumentException">Thrown if any parameter is null or whitespace.</exception>
     public void Update(string title, string topic, string description)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(title);
@@ -50,6 +69,11 @@ public class DiscussionThread
         Description = description.Trim();
     }
 
+    /// <summary>
+    /// Validates if the provided code matches the thread's access code.
+    /// </summary>
+    /// <param name="code">The code to check.</param>
+    /// <returns>True if the code is correct or if no code is required; otherwise, false.</returns>
     public bool IsCorrectCode(string? code)
     {
         if (AccessCode == code)

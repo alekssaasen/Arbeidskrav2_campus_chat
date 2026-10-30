@@ -11,6 +11,17 @@ public class Profile
     
     private Profile() { }
 
+    /// <summary>
+    /// Creates a new instance of <see cref="Profile"/>.
+    /// </summary>
+    /// <param name="id">The unique ID for the profile.</param>
+    /// <param name="userName">The username.</param>
+    /// <param name="bio">The user's bio (optional).</param>
+    /// <param name="isAudit">Whether this is an audit profile.</param>
+    /// <param name="avatarColor">The hex color code for the avatar.</param>
+    /// <param name="schoolYear">The starting date of the school year.</param>
+    /// <returns>A new <see cref="Profile"/> instance.</returns>
+    /// <exception cref="ArgumentException">Thrown if validation fails.</exception>
     public static Profile Create(
         int id,
         string userName,
@@ -30,6 +41,15 @@ public class Profile
             IsAudit = isAudit
         };
     }
+
+    /// <summary>
+    /// Updates the profile's information.
+    /// </summary>
+    /// <param name="userName">The new username.</param>
+    /// <param name="bio">The new bio.</param>
+    /// <param name="avatarColor">The new avatar color.</param>
+    /// <param name="schoolYear">The new school year.</param>
+    /// <exception cref="ArgumentException">Thrown if validation fails.</exception>
     public void Update(
         string userName,
         string? bio,

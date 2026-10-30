@@ -4,6 +4,10 @@ namespace Arbeidskrav2_campus_chat.Data;
 
 public static class SeedData
 {
+    /// <summary>
+    /// Creates a list of seed user profiles.
+    /// </summary>
+    /// <returns>A list of profiles.</returns>
     public static List<Profile> CreateProfiles()
     {
         return new List<Profile>
@@ -33,6 +37,11 @@ public static class SeedData
                 true, "#78909C", new DateOnly(2023, 8, 15))
         };
     }
+
+    /// <summary>
+    /// Creates a list of seed discussion threads.
+    /// </summary>
+    /// <returns>A list of discussion threads.</returns>
     public static List<DiscussionThread> CreateThreads()
     {
         return new List<DiscussionThread>
