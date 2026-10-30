@@ -98,6 +98,9 @@ else
     private string? _codeError;
     private bool _isMember;
 
+    /// <summary>
+    /// Disposes of the component, unsubscribing from events.
+    /// </summary>
     public void Dispose()
     {
         PostService.PostsChanged -= OnPostsChanged;
