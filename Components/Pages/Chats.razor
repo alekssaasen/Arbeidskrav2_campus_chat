@@ -1,6 +1,87 @@
-﻿@page "/Chats"
+﻿@page "/chats"
+@rendermode InteractiveServer
+@implements IDisposable
+@inject DirectMessageService DirectMessageService
+@inject UserService UserService
+@inject CurrentUserService CurrentUserService
+
 <h3>Chats</h3>
+@if (!CurrentUserService.IsLoaded)
+{
+    <p>Loading…</p>
+}
+else if (CurrentUserService.ProfileId == null)
+{
+    <p>Log in to see your chats.</p>
+}
+else if (!_conversations.Any())
+{
+    <p>No chats yet. Open a profile and send a message.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var message in _conversations)
+        {
+            var otherId = message.SenderId == CurrentUserService.ProfileId ? message.ReceiverId : message.SenderId;
+            <li class="list-group-item">
+                <a href="/chats/@otherId"><strong>@GetName(otherId)</strong></a>
+                <div class="text-muted small">@message.Message · @message.SentAt.ToLocalTime().ToString("g")</div>
+            </li>
+        }
+    </ul>
+}
 
 @code {
-    
+    private IReadOnlyList<DirectMessage> _conversations = [];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CurrentUserService.RestoreProfileAsync();
+            LoadConversations();
+            DirectMessageService.MessageSent += OnMessageSent;
+            StateHasChanged();
+        }
+    }
+
+    private void LoadConversations()
+    {
+        if (CurrentUserService.ProfileId == null)
+        {
+            return;
+        }
+        _conversations = DirectMessageService.GetConversations(CurrentUserService.ProfileId.Value);
+    }
+
+    private string GetName(int profileId)
+    {
+        try
+        {
+            return UserService.GetProfileById(profileId).UserName;
+        }
+        catch (KeyNotFoundException)
+        {
+            return "Former student";
+        }
+    }
+
+    private void OnMessageSent(int senderId, int receiverId)
+    {
+        if (senderId != CurrentUserService.ProfileId && receiverId != CurrentUserService.ProfileId)
+        {
+            return;
+        }
+        InvokeAsync(() =>
+        {
+            LoadConversations();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        DirectMessageService.MessageSent -= OnMessageSent;
+    }
 }
