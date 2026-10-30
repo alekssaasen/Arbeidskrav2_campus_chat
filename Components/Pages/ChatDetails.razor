@@ -1,6 +1,116 @@
-﻿@page "/ChatDetails"
-<h3>ChatDetails</h3>
+﻿@page "/chats/{OtherId:int}"
+@rendermode InteractiveServer
+@implements IDisposable
+@inject DirectMessageService DirectMessageService
+@inject UserService UserService
+@inject CurrentUserService CurrentUserService
+
+@if (!CurrentUserService.IsLoaded)
+{
+    <p>Loading…</p>
+}
+else if (CurrentUserService.ProfileId == null)
+{
+    <p>Log in to chat.</p>
+}
+else if (_otherName == null)
+{
+    <p>User not found.</p>
+}
+else
+{
+    <h3>Chat with <a href="/profiles/@OtherId">@_otherName</a></h3>
+
+    <div class="mb-3">
+        @if (!_messages.Any())
+        {
+            <p>No messages yet. Say hi!</p>
+        }
+        @foreach (var message in _messages)
+        {
+            var isMine = message.SenderId == CurrentUserService.ProfileId;
+            <div class="@(isMine ? "text-end" : "text-start") mb-2">
+                <div class="d-inline-block p-2 rounded @(isMine ? "bg-primary text-white" : "bg-light")">@message.Message</div>
+                <div class="text-muted small">@message.SentAt.ToLocalTime().ToString("g")</div>
+            </div>
+        }
+    </div>
+
+    <textarea class="form-control mb-2" @bind="_newMessage"></textarea>
+    @if (_error != null)
+    {
+        <p class="text-danger">@_error</p>
+    }
+    <button class="btn btn-primary" @onclick="Send">Send</button>
+}
 
 @code {
-    
+    [Parameter] public int OtherId { get; set; }
+    private IReadOnlyList<DirectMessage> _messages = [];
+    private string? _otherName;
+    private string _newMessage = "";
+    private string? _error;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CurrentUserService.RestoreProfileAsync();
+            LoadChat();
+            DirectMessageService.MessageSent += OnMessageSent;
+            StateHasChanged();
+        }
+    }
+
+    private void LoadChat()
+    {
+        if (CurrentUserService.ProfileId == null)
+        {
+            return;
+        }
+        var me = CurrentUserService.ProfileId.Value;
+        try
+        {
+            _otherName = UserService.GetProfileById(OtherId).UserName;
+            _messages = DirectMessageService.GetMessages(me, me, OtherId);
+        }
+        catch (KeyNotFoundException)
+        {
+            _otherName = null;
+        }
+    }
+
+    private void Send()
+    {
+        _error = null;
+        try
+        {
+            DirectMessageService.CreateMessage(CurrentUserService.ProfileId!.Value, OtherId, _newMessage);
+            _newMessage = "";
+        }
+        catch (ArgumentException)
+        {
+            _error = "A message can't be empty.";
+        }
+    }
+
+    private void OnMessageSent(int senderId, int receiverId)
+    {
+        var me = CurrentUserService.ProfileId;
+        var isThisChat = (senderId == me && receiverId == OtherId) || (senderId == OtherId && receiverId == me);
+        if (!isThisChat)
+        {
+            return;
+        }
+        InvokeAsync(() =>
+        {
+            LoadChat();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        DirectMessageService.MessageSent -= OnMessageSent;
+    }
 }
