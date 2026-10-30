@@ -23,6 +23,10 @@ else
         {
             <button class="btn btn-outline-primary btn-sm mb-3" @onclick="StartEdit">Edit profile</button>
         }
+        @if (CurrentUserService.ProfileId != null && CurrentUserService.ProfileId != ProfileId)
+        {
+            <a class="btn btn-outline-secondary btn-sm mb-3" href="/chats/@ProfileId">Send message</a>
+        }
 
         <h5>Threads joined</h5>
         @if (!_joinedThreads.Any())
